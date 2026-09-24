@@ -1,7 +1,7 @@
 <?php
 $host = "localhost";
 $username = "root";
-$password = "";
+$password = "root123";
 $database = "musdaa_medical_camp";
 
 $conn = new mysqli($host, $username, $password, $database);
