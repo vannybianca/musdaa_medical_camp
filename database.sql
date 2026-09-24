@@ -9,17 +9,6 @@ CREATE TABLE summit_days (
 );
 
 INSERT INTO summit_days (day_number, event_date, description) VALUES
-(1, '2026-09-06', 'Day 1'),
-(2, '2026-09-07', 'Day 2'),
-(3, '2026-09-08', 'Day 3'),
-(4, '2026-09-09', 'Day 4'),
-(5, '2026-09-10', 'Day 5'),
-(6, '2026-09-11', 'Day 6'),
-(7, '2026-09-12', 'Day 7');
-
-CREATE TABLE attendees (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    registration_number VARCHAR(30) NOT NULL UNIQUE,
 (1, '2026-09-27', 'Day 1'),
 (2, '2026-09-28', 'Day 2'),
 (3, '2026-09-29', 'Day 3'),
@@ -27,6 +16,10 @@ CREATE TABLE attendees (
 (5, '2026-10-01', 'Day 5'),
 (6, '2026-10-02', 'Day 6'),
 (7, '2026-10-03', 'Day 7');
+
+CREATE TABLE attendees (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    registration_number VARCHAR(30) NOT NULL UNIQUE,
     district VARCHAR(100),
     address VARCHAR(255),
     occupation VARCHAR(150),
