@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once "config/database.php";
+require_once "database.php";
 
 if (!isset($_SESSION["user_id"])) {
     header("Location: login.php");
@@ -65,7 +65,7 @@ $recent_records = $records ? $records->fetch_all(MYSQLI_ASSOC) : [];
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Medical Services | MUSDAA Medical Camp</title>
-<link rel="stylesheet" href="assets/css/style.css">
+<link rel="stylesheet" href="style.css">
 </head>
 <body class="service-page-body">
 <header class="topbar">

@@ -5,7 +5,7 @@
 <head>
 <meta charset="UTF-8">
 <title>MUSDAA Medical Camp</title>
-<link rel="stylesheet" href="assets/css/style.css">
+<link rel="stylesheet" href="style.css">
 </head>
 <body class="home-page">
 <div class="container small home-card">

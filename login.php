@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once "config/database.php";
+require_once "database.php";
 
 $error = "";
 $username = "";
@@ -51,7 +51,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Login | MUSDAA Medical Camp</title>
-<link rel="stylesheet" href="assets/css/style.css">
+<link rel="stylesheet" href="style.css">
 </head>
 <body class="login-page">
 <main class="login-shell">
