@@ -71,7 +71,7 @@ h1 { text-align: center; letter-spacing: -.5px; }
 }
 
 .form-section { align-items: baseline; border-bottom: 1px solid var(--line); display: flex; gap: 10px; margin-top: 10px; padding: 4px 0 9px; }
-.form-section span { color: var(--teal-dark); font-family: 'Manrope', sans-serif; font-size: 14px; font-weight: 800; }
+.form-section span { color: var(--teal-dark); font-family: 'Manrope', sans-serif; font-size: 20px; font-weight: 800; }
 .form-section small { color: var(--muted); font-size: 12px; }
 
 .registration-card { max-width: 1220px; padding: 38px clamp(34px, 5vw, 68px) 42px; }
