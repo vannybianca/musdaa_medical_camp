@@ -30,11 +30,11 @@ SETUP
 
 REGISTRATION
 ------------
-http://localhost/musdaa_medical_camp/registration/register.php
+http://localhost/musdaa_medical_camp/register.php
 
 DAILY CHECK-IN
 --------------
-http://localhost/musdaa_medical_camp/checkin/checkin.php
+http://localhost/musdaa_medical_camp/checkin.php
 
 IMPORTANT
 ---------

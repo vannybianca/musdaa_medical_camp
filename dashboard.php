@@ -65,10 +65,11 @@ $recent_items = $recent ? $recent->fetch_all(MYSQLI_ASSOC) : [];
 <body class="dashboard-page">
 <header class="topbar">
     <a class="topbar-brand" href="dashboard.php">MUSDAA <span>Medical Camp</span></a>
-    <nav class="topbar-nav">
+    <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="main-menu">Menu</button>
+    <nav class="topbar-nav" id="main-menu">
         <a class="active" href="dashboard.php" aria-current="page">Dashboard</a>
-        <a href="registration/register.php">Register attendee</a>
-        <a href="checkin/checkin.php">Daily check-in</a>
+        <a href="register.php">Register attendee</a>
+        <a href="checkin.php">Daily check-in</a>
         <a href="service_records.php">Medical services</a>
         <a href="reports.php">Reports</a>
         <a class="logout-link" href="logout.php"><span class="user-avatar" aria-hidden="true">M</span>Sign out</a>
@@ -81,14 +82,13 @@ $recent_items = $recent ? $recent->fetch_all(MYSQLI_ASSOC) : [];
             <h1>Good day, <?= htmlspecialchars($_SESSION["full_name"] ?? "staff") ?></h1>
             <p class="muted-copy">Manage attendees, attendance, and medical care from one place.</p>
         </div>
-        <a class="button-link compact-button" href="registration/register.php">+ Register attendee</a>
+        <a class="button-link compact-button" href="register.php">+ Register attendee</a>
     </div>
 
     <section class="stat-grid" aria-label="Camp statistics">
         <div class="stat-card"><span>Registered attendees</span><strong><?= $stats["attendees"] ?></strong><small>All registrations</small></div>
         <div class="stat-card"><span>Check-ins today</span><strong><?= $stats["checkins"] ?></strong><small>Recorded today</small></div>
         <div class="stat-card"><span>Services today</span><strong><?= $stats["services"] ?></strong><small>Clinical visits today</small></div>
-        <div class="stat-card"><span>Upcoming camp days</span><strong><?= $stats["days"] ?></strong><small>Remaining on schedule</small></div>
     </section>
 
     <section class="dashboard-grid">
@@ -136,5 +136,6 @@ $recent_items = $recent ? $recent->fetch_all(MYSQLI_ASSOC) : [];
         </aside>
     </section>
 </main>
+<script src="menu.js"></script>
 </body>
 </html>

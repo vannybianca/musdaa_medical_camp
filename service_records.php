@@ -70,7 +70,8 @@ $recent_records = $records ? $records->fetch_all(MYSQLI_ASSOC) : [];
 <body class="service-page-body">
 <header class="topbar">
     <a class="topbar-brand" href="dashboard.php">MUSDAA <span>Medical Camp</span></a>
-    <nav class="topbar-nav"><a href="dashboard.php">Dashboard</a><a href="registration/register.php">Register attendee</a><a href="checkin/checkin.php">Daily check-in</a><a class="active" href="service_records.php" aria-current="page">Medical services</a><a href="reports.php">Reports</a><a class="logout-link" href="logout.php">Sign out</a></nav>
+    <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="main-menu">Menu</button>
+    <nav class="topbar-nav" id="main-menu"><a href="dashboard.php">Dashboard</a><a href="register.php">Register attendee</a><a href="checkin.php">Daily check-in</a><a class="active" href="service_records.php" aria-current="page">Medical services</a><a href="reports.php">Reports</a><a class="logout-link" href="logout.php">Sign out</a></nav>
 </header>
 <main class="service-page">
     <div class="dashboard-heading"><div><a class="history-back" href="index.php" onclick="if (window.history.length > 1) { window.history.back(); return false; }">Back</a><p class="eyebrow">Clinical records</p><h1>Record a medical service</h1><p class="muted-copy">Keep each attendee's care history organized and easy to review.</p></div></div>
@@ -114,5 +115,6 @@ function toggleReferralNotes() {
 referralRequired.addEventListener('change', toggleReferralNotes);
 toggleReferralNotes();
 </script>
+<script src="menu.js"></script>
 </body>
 </html>

@@ -72,10 +72,11 @@ while ($row = $day_result->fetch_assoc()) {
 <body class="reports-page-body">
 <header class="topbar">
     <a class="topbar-brand" href="dashboard.php">MUSDAA <span>Medical Camp</span></a>
-    <nav class="topbar-nav">
+    <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="main-menu">Menu</button>
+    <nav class="topbar-nav" id="main-menu">
         <a href="dashboard.php">Dashboard</a>
-        <a href="registration/register.php">Register attendee</a>
-        <a href="checkin/checkin.php">Daily check-in</a>
+        <a href="register.php">Register attendee</a>
+        <a href="checkin.php">Daily check-in</a>
         <a href="service_records.php">Medical services</a>
         <a class="active" href="reports.php" aria-current="page">Reports</a>
         <a class="logout-link" href="logout.php">Sign out</a>
@@ -137,5 +138,6 @@ while ($row = $day_result->fetch_assoc()) {
         </div>
     </section>
 </main>
+<script src="menu.js"></script>
 </body>
 </html>

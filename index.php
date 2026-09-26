@@ -23,10 +23,10 @@
             <span aria-hidden="true">&#8594;</span>
         </a>
         <div class="secondary-actions">
-            <a class="action-link" href="registration/register.php">
+            <a class="action-link" href="register.php">
                 <span class="action-copy"><strong>Register an attendee</strong><small>Add a new camp participant</small></span>
             </a>
-            <a class="action-link" href="checkin/checkin.php">
+            <a class="action-link" href="checkin.php">
                 <span class="action-copy"><strong>Daily check-in</strong><small>Record today's attendance</small></span>
             </a>
         </div>

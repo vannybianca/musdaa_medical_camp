@@ -1,5 +1,5 @@
 <?php
-require_once "../config/database.php";
+require_once "database.php";
 
 $message = "";
 
@@ -77,7 +77,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 <head>
 <meta charset="UTF-8">
 <title>MUSDAA Medical Camp Registration</title>
-<link rel="stylesheet" href="../assets/css/style.css">
+<link rel="stylesheet" href="style.css">
 </head>
 <body class="registration-page">
 <div class="container registration-card">

@@ -12,12 +12,8 @@ END
 WHERE day_number BETWEEN 1 AND 7;
 
 ALTER TABLE attendees
-    ADD COLUMN IF NOT EXISTS first_name VARCHAR(100) AFTER registration_number,
-    ADD COLUMN IF NOT EXISTS middle_name VARCHAR(100) AFTER first_name,
-    ADD COLUMN IF NOT EXISTS last_name VARCHAR(100) AFTER middle_name,
-    ADD COLUMN IF NOT EXISTS phone VARCHAR(30) AFTER last_name,
-    ADD COLUMN IF NOT EXISTS email VARCHAR(150) AFTER phone,
-    ADD COLUMN IF NOT EXISTS district VARCHAR(100) AFTER email,
+    ADD COLUMN email VARCHAR(150) AFTER phone,
+    ADD COLUMN district VARCHAR(100) AFTER email,
     ADD COLUMN occupation VARCHAR(150) AFTER address,
     ADD COLUMN course VARCHAR(150) AFTER occupation,
     ADD COLUMN fellowship VARCHAR(150) AFTER church,
