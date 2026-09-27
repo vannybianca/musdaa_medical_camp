@@ -12,6 +12,9 @@ END
 WHERE day_number BETWEEN 1 AND 7;
 
 ALTER TABLE attendees
+    ADD COLUMN age INT AFTER address,
+    ADD COLUMN days_attend VARCHAR(100) AFTER age,
+    ADD COLUMN musdaa_status ENUM('MUSDAA', 'Nonmusdaa') AFTER days_attend,
     ADD COLUMN email VARCHAR(150) AFTER phone,
     ADD COLUMN district VARCHAR(100) AFTER email,
     ADD COLUMN occupation VARCHAR(150) AFTER address,

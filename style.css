@@ -90,6 +90,9 @@ h1 { text-align: center; letter-spacing: -.5px; }
 .registration-form-grid .consent { border-top: 1px solid var(--line); margin-top: 10px; padding-top: 20px; }
 .registration-form-grid .consent label { align-items: flex-start; display: flex; gap: 8px; min-height: 0; }
 .registration-form-grid .consent input { flex: 0 0 auto; height: auto; margin-top: 3px; }
+.choice-grid { display: flex; flex-wrap: wrap; gap: 10px 18px; }
+.choice-grid label { align-items: center; display: inline-flex; gap: 7px; font-weight: 500; margin: 0; min-height: 42px; }
+.choice-grid input { height: auto; margin: 0; width: auto; }
 .registration-footer { border-top: 2px solid rgba(8, 127, 123, .24); margin-top: 14px; padding-top: 16px; }
 .registration-footer > .full { margin-top: 18px; }
 .registration-footer button { min-height: 50px; }
@@ -151,7 +154,6 @@ button:hover, .button-link:hover { background: var(--teal-dark); box-shadow: 0 9
 .success { background: #d4edda; }
 .error { background: #f8d7da; }
 .warning { background: #fff3cd; }
-.checkin-card h1 { margin: 12px 0 8px; }
 .page-kicker { align-items: center; color: var(--teal); display: flex; font-size: 11px; font-weight: 700; gap: 8px; letter-spacing: 1.5px; text-transform: uppercase; }
 .status-dot { background: #46ad83; border-radius: 50%; height: 8px; width: 8px; }
 .page-kicker .status-dot { animation: status-pulse 2.2s ease-in-out infinite; }
@@ -173,25 +175,13 @@ button:hover, .button-link:hover { background: var(--teal-dark); box-shadow: 0 9
 .checkin-time span { color: var(--muted); }
 
 .checkin-page { background: #edf5f2; padding: 0; }
-.checkin-shell { background: #edf5f2; display: grid; grid-template-columns: minmax(360px, .95fr) minmax(440px, 1.05fr); height: 100vh; min-height: 100vh; overflow: hidden; position: relative; width: 100%; }
+.checkin-shell { background: #edf5f2; display: grid; grid-template-columns: minmax(360px, .95fr) minmax(440px, 1.05fr); height: 100vh; min-height: 100vh; overflow: hidden; position: center; width: 100%; align-items: center; justify-content: center; margin-left: 250px; }
 .checkin-top-actions { align-items: center; display: flex; gap: 10px; left: 34px; position: absolute; top: 30px; z-index: 3; }
 .checkin-back { background: rgba(255, 255, 255, .14); border-color: rgba(255, 255, 255, .42); color: #fff; margin: 0; position: static; }
 .checkin-back:hover { background: rgba(255, 255, 255, .26); border-color: rgba(255, 255, 255, .75); color: #fff; }
 .checkin-home-chip { background: rgba(255, 255, 255, .1); border: 1px solid rgba(255, 255, 255, .28); border-radius: 8px; color: rgba(255, 255, 255, .88); font-size: 12px; font-weight: 700; padding: 9px 13px; text-decoration: none; transition: background .2s ease, border-color .2s ease; }
 .checkin-home-chip:hover { background: rgba(255, 255, 255, .22); border-color: rgba(255, 255, 255, .65); }
-.checkin-intro { align-content: start; background-image: linear-gradient(145deg, rgba(5, 96, 94, .94), rgba(8, 127, 123, .94)), url('../../Medical%20camp%202.jpg'); background-position: center; background-size: cover; color: #fff; display: grid; gap: 0; min-height: 100%; overflow: hidden; padding: clamp(72px, 10vh, 120px) clamp(40px, 8vw, 132px) clamp(44px, 7vw, 96px); position: relative; }
-.checkin-intro::after { border: 1px solid rgba(255, 255, 255, .2); border-radius: 50%; bottom: -95px; content: ''; height: 230px; position: absolute; right: -100px; width: 230px; }
-.checkin-brand { align-self: start; display: inline-block; width: fit-content; }
-.checkin-brand { justify-self: center; }
-.checkin-brand img { display: block; filter: brightness(0) invert(1); height: auto; width: clamp(280px, 30vw, 380px); }
-.checkin-intro-copy { margin-top: clamp(110px, 16vh, 185px); position: relative; z-index: 1; }
-.checkin-intro .eyebrow { color: #fff; font-size: clamp(23px, 2.3vw, 32px); font-weight: 800; letter-spacing: 3px; margin-bottom: 18px; text-shadow: 0 2px 12px rgba(0, 0, 0, .22); }
-.checkin-intro-copy { text-align: center; }
-.checkin-intro h1 { color: #fff; font-size: clamp(38px, 5vw, 62px); letter-spacing: 2px; line-height: 1.04; margin: 0 auto 18px; max-width: 540px; text-align: center; }
-.checkin-tagline { color: rgba(255, 255, 255, .96); font-family: 'Manrope', sans-serif; font-size: clamp(21px, 2vw, 29px); font-weight: 700; line-height: 1.2; margin: 0 auto 16px; }
-.checkin-intro-copy > p:last-child { color: rgba(255, 255, 255, .86); font-size: clamp(16px, 1.3vw, 19px); line-height: 1.6; margin: 0 auto; max-width: 360px; }
-.checkin-intro .intro-note { align-items: center; color: rgba(220, 255, 247, .82); display: flex; font-size: 11px; font-weight: 700; justify-content: center; letter-spacing: 1.5px; margin-top: 0; text-transform: uppercase; position: relative; z-index: 1; }
-.checkin-card { align-content: center; background: linear-gradient(145deg, #fbfcfa, #eef7f3); border-left: 1px solid #e1ebe8; display: grid; margin: 0; max-width: none; min-height: 100%; padding: clamp(44px, 8vw, 120px) clamp(40px, 9vw, 160px); position: relative; }
+.checkin-card { align-content: center; background: linear-gradient(145deg, #fbfcfa, #eef7f3); border-left: 1px solid #e1ebe8; display: grid; justify-items: center; margin: 0; max-width: none; min-height: 100%; padding: clamp(44px, 8vw, 120px) clamp(40px, 9vw, 160px); position: relative; text-align: center; }
 .theme-toggle { align-items: center; background: #fff; border: 1px solid #d7e5e1; border-radius: 999px; color: var(--teal-dark); display: flex; gap: 3px; justify-content: center; padding: 7px; position: absolute; right: clamp(24px, 4vw, 58px); top: 28px; width: auto; z-index: 2; }
 .theme-toggle:hover { background: #eaf6f3; box-shadow: none; transform: none; }
 .theme-icon { align-items: center; border-radius: 50%; display: inline-flex; font-size: 15px; height: 25px; justify-content: center; width: 25px; }
@@ -199,7 +189,6 @@ button:hover, .button-link:hover { background: var(--teal-dark); box-shadow: 0 9
 .moon-icon { opacity: .45; }
 .dark-mode .checkin-card { background: linear-gradient(145deg, #1f2d31, #172226); border-color: #34484b; color: #eef8f5; }
 .dark-mode .checkin-heading h2 { color: #f5fffc; }
-.dark-mode .checkin-heading .intro-text, .dark-mode .field-help { color: #aec2c0; }
 .dark-mode .checkin-card label { color: #e6f2ef; }
 .dark-mode .checkin-card input, .dark-mode .checkin-card select { background: #152125; border-color: #4a6466; color: #f1fbf8; }
 .dark-mode .checkin-card input::placeholder { color: #9aafad; }
@@ -211,11 +200,12 @@ button:hover, .button-link:hover { background: var(--teal-dark); box-shadow: 0 9
 .dark-mode .attendee-suggestion:hover, .dark-mode .attendee-suggestion:focus { background: #29474a; color: #fff; }
 .dark-mode .attendee-suggestion-empty { color: #aec2c0; }
 .checkin-heading, .checkin-card form, .checkin-card .back-link, .checkin-card > .success, .checkin-card > .error, .checkin-card > .warning { max-width: 470px; width: 100%; }
-.checkin-heading h2 { font-family: 'Manrope', sans-serif; font-size: 32px; margin: 0 0 8px; }
-.checkin-heading .intro-text { margin: 0 0 30px; max-width: 390px; text-align: left; }
-.checkin-card form { margin-top: 0; }
+.checkin-heading h2 { font-family: 'Manrope', sans-serif; font-size: 32px; margin: 0 0 12px; }
+.checkin-instructions { color: var(--muted); line-height: 1.6; margin: 0 0 28px; }
+.checkin-card form { margin-top: 0; text-align: left; }
 .checkin-card form > label { font-size: 13px; }
 .checkin-card form > select { margin-bottom: 22px; }
+.checkin-note { color: var(--muted); font-size: 12px; line-height: 1.5; margin: 16px 0 0; text-align: center; }
 .checkin-card .back-link { color: var(--teal-dark); margin-top: 26px; text-align: center; text-decoration: none; }
 .checkin-card .back-link:hover { color: var(--teal); }
 .checkin-home-link { color: var(--teal-dark); display: block; font-size: 13px; font-weight: 600; margin: 24px auto 0; padding: 0; text-decoration: none; transition: color .2s ease; width: fit-content; }
@@ -407,13 +397,6 @@ td { font-size: 13px; }
     .checkin-shell { display: block; }
     .checkin-top-actions { left: 26px; top: 24px; }
     .checkin-shell { height: auto; min-height: 100vh; overflow: visible; }
-    .checkin-brand img { width: 260px; }
-    .checkin-intro { min-height: 470px; padding: 84px 26px 38px; }
-    .checkin-intro-copy { margin-top: 86px; }
-    .checkin-intro .eyebrow { font-size: 22px; }
-    .checkin-intro h1 { font-size: clamp(34px, 10vw, 48px); }
-    .checkin-tagline { font-size: 22px; }
-    .checkin-intro-copy > p:last-child { font-size: 16px; }
     .checkin-card { min-height: auto; padding: 44px 26px 52px; }
     .topbar { align-items: center; gap: 12px; padding: 12px 16px; position: relative; }
     .topbar-brand { font-size: 16px; }

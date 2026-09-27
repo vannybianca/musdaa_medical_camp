@@ -119,26 +119,14 @@ if ($attendee_result) {
 <div class="checkin-top-actions">
     <a class="history-back checkin-back" href="../index.php" onclick="if (window.history.length > 1) { window.history.back(); return false; }">Back</a>
 </div>
-<section class="checkin-intro">
-    <a class="checkin-brand" href="../index.php" aria-label="MUSDAA Medical Camp home">
-        <img src="../Logo.png" alt="Makerere University Seventh-day Adventist Association">
-    </a>
-    <div class="checkin-intro-copy">
-        <h1>MEDICAL CAMP 2026</h1>
-        <p class="checkin-tagline">Every check-in, counted.</p>
-        <p>Keep daily attendance accurate, quick, and ready for the people your camp serves.</p>
-    </div>
-</section>
-
 <section class="checkin-card" aria-labelledby="checkin-heading">
     <button class="theme-toggle" id="theme_toggle" type="button" aria-label="Switch to dark mode" aria-pressed="false">
         <span class="theme-icon sun-icon" aria-hidden="true">&#9788;</span>
         <span class="theme-icon moon-icon" aria-hidden="true">&#9790;</span>
     </button>
     <div class="checkin-heading">
-        <div class="page-kicker">Attendance desk</div>
         <h2 id="checkin-heading">Daily Check-In</h2>
-        <p class="intro-text">Record today’s attendance by searching for an attendee by name.</p>
+        <p class="checkin-instructions">Search for the attendee, choose today&apos;s camp day, and submit the form. After a successful check-in, proceed to the medical services desk.</p>
     </div>
 
     <?= $message ?>
@@ -151,7 +139,6 @@ if ($attendee_result) {
             placeholder="Search registered attendees" autocomplete="off" required autofocus>
         <div class="attendee-suggestions" id="attendee_suggestions" role="listbox" aria-label="Matching attendees"></div>
     </div>
-    <small class="field-help">Start typing to search registered attendees.</small>
 
     <label for="day_number">Camp day</label>
     <select id="day_number" name="day_number" required>
@@ -166,6 +153,7 @@ if ($attendee_result) {
     </select>
 
     <button type="submit">Check in attendee <span aria-hidden="true">&#8594;</span></button>
+    <p class="checkin-note">Attendance is recorded once per attendee for each camp day.</p>
     </form>
 </section>
 </main>
