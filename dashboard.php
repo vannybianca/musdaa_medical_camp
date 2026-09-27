@@ -103,7 +103,7 @@ $recent_items = $recent ? $recent->fetch_all(MYSQLI_ASSOC) : [];
             </form>
             <div class="table-wrap">
                 <table>
-                    <thead><tr><th>Registration</th><th>Name</th><th>Phone</th><th>Course</th></tr></thead>
+                    <thead><tr><th>Registration</th><th>Name</th><th>Phone</th><th>Course</th><th>Results</th></tr></thead>
                     <tbody>
                     <?php while ($attendee = $attendees->fetch_assoc()): ?>
                         <tr>
@@ -111,6 +111,7 @@ $recent_items = $recent ? $recent->fetch_all(MYSQLI_ASSOC) : [];
                             <td><?= htmlspecialchars(trim($attendee["first_name"] . " " . $attendee["middle_name"] . " " . $attendee["last_name"])) ?></td>
                             <td><?= htmlspecialchars($attendee["phone"]) ?></td>
                             <td class="course-cell"><?= htmlspecialchars($attendee["course"] ?: "-") ?></td>
+                            <td><a class="report-download" href="person_report.php?attendee_id=<?= (int) $attendee["id"] ?>">Download PDF</a></td>
                         </tr>
                     <?php endwhile; ?>
                     </tbody>

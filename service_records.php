@@ -8,10 +8,25 @@ if (!isset($_SESSION["user_id"])) {
 }
 
 $message = "";
-$available_tests = ["SCD sickle cell", "Malaria", "H. pylori", "Typhoid", "Hepatitis B", "Syphilis", "Urinalysis", "HCG"];
+$available_tests = ["SCD sickle cell", "Malaria", "H. pylori", "Typhoid", "Hepatitis B", "HIV", "Syphilis", "Urinalysis", "HCG", "Blood group"];
+
+if (($_GET["saved"] ?? "") === "1") {
+    $message = "<div class='success'>Medical service record saved successfully.</div>";
+} elseif (($_GET["saved"] ?? "") === "duplicate") {
+    $message = "<div class='warning'>This attendee already has a medical record. No duplicate record was created.</div>";
+}
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $attendee_id = (int) ($_POST["attendee_id"] ?? 0);
+
+    $existing_stmt = $conn->prepare("SELECT id FROM service_records WHERE attendee_id = ? LIMIT 1");
+    $existing_stmt->bind_param("i", $attendee_id);
+    $existing_stmt->execute();
+    if ($existing_stmt->get_result()->num_rows > 0) {
+        header("Location: service_records.php?saved=duplicate");
+        exit;
+    }
+
     $service_id = 1;
     $service_date = $_POST["service_date"] ?? date("Y-m-d");
     $selected_tests = $_POST["tests"] ?? [];
@@ -55,7 +70,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             $referral->bind_param("iiss", $attendee_id, $service_record_id, $referral_notes, $staff);
             $referral->execute();
         }
-        $message = "<div class='success'>Medical service record saved successfully.</div>";
+        header("Location: service_records.php?saved=1");
+        exit;
     } else {
         $message = "<div class='error'>Could not save this service record.</div>";
     }
@@ -67,7 +83,7 @@ $attendees = $conn->query(
 );
 $services = $conn->query("SELECT id, service_name FROM medical_services ORDER BY service_name");
 $records = $conn->query(
-    "SELECT a.first_name, a.last_name, m.service_name, r.service_date, r.result, r.attended_by
+    "SELECT a.id AS attendee_id, a.first_name, a.last_name, m.service_name, r.service_date, r.result, r.attended_by
      FROM service_records r
      JOIN attendees a ON a.id = r.attendee_id
      JOIN medical_services m ON m.id = r.service_id
@@ -99,7 +115,9 @@ $recent_records = $records ? $records->fetch_all(MYSQLI_ASSOC) : [];
                     <div class="form-section full"><span>Visit details</span><small>Choose the attendee and date</small></div>
                     <div class="full"><label for="attendee_id">Attendee *</label><select id="attendee_id" name="attendee_id" required><option value="">Select attendee</option><?php while ($attendee = $attendees->fetch_assoc()): ?><option value="<?= $attendee["id"] ?>"><?= htmlspecialchars($attendee["registration_number"] . " - " . trim($attendee["first_name"] . " " . $attendee["middle_name"] . " " . $attendee["last_name"])) ?></option><?php endwhile; ?></select></div>
                     <div><label for="service_date">Service date *</label><input id="service_date" type="date" name="service_date" value="<?= date("Y-m-d") ?>" required></div>
-                    <div class="form-section full"><span>Tests</span><small>Select all tests performed</small></div>
+                    <div class="form-section full"><span>Doctor&apos;s notes</span><small>Record the presenting complaint or initial clinical notes</small></div>
+                    <div class="full"><label for="notes">Doctor&apos;s notes</label><textarea id="notes" name="notes" rows="4" placeholder="Enter the presenting complaint or doctor&apos;s notes"></textarea></div>
+                    <div class="form-section full"><span>Tests and results</span><small>Select each test performed and enter its result</small></div>
                     <div class="full test-options"><?php foreach ($available_tests as $test): ?><div class="test-result-row"><label><input type="checkbox" name="tests[]" value="<?= htmlspecialchars($test) ?>"> <?= htmlspecialchars($test) ?></label><input type="text" name="test_results[<?= htmlspecialchars($test) ?>]" placeholder="Result"></div><?php endforeach; ?></div>
                     <div class="form-section full"><span>Vitals</span><small>Record the attendee&apos;s measurements</small></div>
                     <div><label for="temperature">Temperature <small class="field-unit">(°C)</small></label><input id="temperature" type="number" name="temperature" min="0" step="0.1"></div>
@@ -110,7 +128,6 @@ $recent_records = $records ? $records->fetch_all(MYSQLI_ASSOC) : [];
                     <div><label for="urine_output">Urine output</label><input id="urine_output" type="text" name="urine_output"></div>
                     <div class="full"><label for="blood_sugar">Blood glucose <small class="field-unit">(mg/dL)</small></label><input id="blood_sugar" type="number" name="blood_sugar" min="0" step="0.01"></div>
                     <div class="full"><label for="consciousness">Level of consciousness</label><select id="consciousness" name="consciousness"><option value="">Select level</option><option value="Alert">Alert</option><option value="Confused">Confused</option><option value="Drowsy">Drowsy</option><option value="Unresponsive">Unresponsive</option></select></div>
-                    <div class="form-section full"><span>Test results</span><small>Each selected test is saved together with its result</small></div>
                     <div class="form-section full"><span>Doctor recommendations or prescription</span><small>Record the next steps for the attendee</small></div>
                     <div class="full"><label for="doctor_recommendation">Recommendations or prescription</label><textarea id="doctor_recommendation" name="doctor_recommendation" rows="4"></textarea></div>
                     <div class="full"><label><input id="referral_required" type="checkbox" name="referral_required"> Referral required</label></div>
@@ -119,7 +136,7 @@ $recent_records = $records ? $records->fetch_all(MYSQLI_ASSOC) : [];
                 </div>
             </form>
         </div>
-        <div class="dashboard-panel service-history-panel"><div class="panel-heading"><div><p class="eyebrow">History</p><h2>Recent services</h2></div><span class="panel-count"><?= count($recent_records) ?> records</span></div><div class="table-wrap"><table><thead><tr><th>Attendee</th><th>Service</th><th>Date</th></tr></thead><tbody><?php foreach ($recent_records as $record): ?><tr><td><?= htmlspecialchars($record["first_name"] . " " . $record["last_name"]) ?></td><td><?= htmlspecialchars($record["service_name"]) ?><small class="table-subtext"><?= htmlspecialchars($record["result"] ?: "No result entered") ?></small></td><td><?= htmlspecialchars(date("M j, Y", strtotime($record["service_date"]))) ?></td></tr><?php endforeach; ?></tbody></table><?php if (!$recent_records): ?><div class="empty-state"><span class="empty-state-icon" aria-hidden="true">+</span><strong>No recent services recorded yet</strong><small>Saved clinical records will appear here.</small></div><?php endif; ?></div><p class="service-history-footer">Showing the latest 15 service records</p></div>
+        <div class="dashboard-panel service-history-panel"><div class="panel-heading"><div><p class="eyebrow">History</p><h2>Recent services</h2></div><span class="panel-count"><?= count($recent_records) ?> records</span></div><div class="table-wrap"><table><thead><tr><th>Attendee</th><th>Service</th><th>Date</th><th>PDF</th></tr></thead><tbody><?php foreach ($recent_records as $record): ?><tr><td><?= htmlspecialchars($record["first_name"] . " " . $record["last_name"]) ?></td><td><?= htmlspecialchars($record["service_name"]) ?><small class="table-subtext"><?= htmlspecialchars($record["result"] ?: "No result entered") ?></small></td><td><?= htmlspecialchars(date("M j, Y", strtotime($record["service_date"]))) ?></td><td><a class="report-download" href="person_report.php?attendee_id=<?= (int) $record["attendee_id"] ?>">Download</a></td></tr><?php endforeach; ?></tbody></table><?php if (!$recent_records): ?><div class="empty-state"><span class="empty-state-icon" aria-hidden="true">+</span><strong>No recent services recorded yet</strong><small>Saved clinical records will appear here.</small></div><?php endif; ?></div><p class="service-history-footer">Showing the latest 15 service records</p></div>
     </section>
     <a class="back-link" href="dashboard.php">Back to dashboard</a>
 </main>

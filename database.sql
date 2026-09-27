@@ -20,6 +20,11 @@ INSERT INTO summit_days (day_number, event_date, description) VALUES
 CREATE TABLE attendees (
     id INT AUTO_INCREMENT PRIMARY KEY,
     registration_number VARCHAR(30) NOT NULL UNIQUE,
+    first_name VARCHAR(100),
+    middle_name VARCHAR(100),
+    last_name VARCHAR(100),
+    gender VARCHAR(20),
+    phone VARCHAR(30),
     district VARCHAR(100),
     address VARCHAR(255),
     age INT,

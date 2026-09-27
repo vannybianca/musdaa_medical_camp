@@ -336,6 +336,8 @@ td { font-size: 13px; }
 .activity-item .status-dot { flex-shrink: 0; margin-top: 5px; }
 .service-history-panel { align-self: start; height: fit-content; }
 .service-history-panel table { min-width: 0; }
+.report-download { color: var(--teal-dark); font-size: 12px; font-weight: 700; text-decoration: none; white-space: nowrap; }
+.report-download:hover { color: var(--teal); text-decoration: underline; text-underline-offset: 3px; }
 .service-history-panel .table-wrap { max-height: 560px; overflow: auto; }
 .field-unit { color: var(--muted); font-size: 11px; font-weight: 500; }
 .referral-notes-field { max-height: 0; opacity: 0; overflow: hidden; pointer-events: none; transform: translateY(-4px); transition: max-height .25s ease, opacity .2s ease, transform .25s ease; }
