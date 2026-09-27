@@ -310,6 +310,11 @@ button:hover, .button-link:hover { background: var(--teal-dark); box-shadow: 0 9
 .service-layout { align-items: start; }
 .service-layout > .dashboard-panel { align-self: start; height: fit-content; margin-top: 0; }
 .service-page .form-section span { color: var(--teal-dark); }
+.test-options { display: grid; gap: 10px 16px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.test-result-row { align-items: center; background: #f4faf8; border: 1px solid var(--line); border-radius: 8px; display: grid; gap: 10px; grid-template-columns: minmax(0, 1fr) minmax(110px, 1fr); padding: 8px 10px; }
+.test-result-row label { align-items: center; display: flex; gap: 8px; margin: 0; }
+.test-result-row input { height: 38px; margin: 0; }
+.test-result-row input[type="checkbox"] { height: auto; width: auto; }
 .dashboard-panel { padding: clamp(22px, 3vw, 34px); }
 .panel-heading { align-items: center; display: flex; justify-content: space-between; margin-bottom: 22px; }
 .panel-heading h2 { font-size: 23px; margin: 0; }
