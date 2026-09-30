@@ -141,6 +141,7 @@ $attendees = $conn->query(
     "SELECT id, registration_number, first_name, middle_name, last_name
      FROM attendees ORDER BY first_name, last_name"
 );
+$attendees = $attendees ? $attendees->fetch_all(MYSQLI_ASSOC) : [];
 $services = $conn->query("SELECT id, service_name FROM medical_services ORDER BY service_name");
 $records = $conn->query(
     "SELECT a.id AS attendee_id, a.first_name, a.middle_name, a.last_name, a.phone,
@@ -180,7 +181,7 @@ $edit_value = static fn(string $field): string => htmlspecialchars((string) ($ed
 <header class="topbar">
     <a class="topbar-brand" href="dashboard.php">MUSDAA <span>Medical Camp</span></a>
     <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="main-menu">Menu</button>
-    <nav class="topbar-nav" id="main-menu"><a href="dashboard.php">Dashboard</a><a href="register.php">Register attendee</a><a href="checkin.php">Daily check-in</a><a class="active" href="service_records.php" aria-current="page">Medical services</a><a href="reports.php">Reports</a><a class="logout-link" href="logout.php">Sign out</a></nav>
+    <nav class="topbar-nav" id="main-menu"><a href="dashboard.php">Dashboard</a><a href="register.php">Register attendee</a><a href="checkin.php">Daily check-in</a><a class="active" href="service_records.php" aria-current="page">Medical services</a><a href="all_records.php">All Records</a><a href="reports.php">Reports</a><a class="logout-link" href="logout.php">Sign out</a></nav>
 </header>
 <main class="service-page">
     <div class="dashboard-heading"><div><a class="history-back" href="index.php" onclick="if (window.history.length > 1) { window.history.back(); return false; }">Back</a><p class="eyebrow">Clinical records</p><h1><?= $editing_record ? "Edit medical service" : "Record a medical service" ?></h1><p class="muted-copy">Keep each attendee's care history organized and easy to review.</p></div></div>
@@ -191,7 +192,7 @@ $edit_value = static fn(string $field): string => htmlspecialchars((string) ($ed
                 <?php if ($editing_record): ?><input type="hidden" name="record_id" value="<?= (int) $editing_record["id"] ?>"><input type="hidden" name="attendee_id" value="<?= (int) $editing_record["attendee_id"] ?>"><?php endif; ?>
                 <div class="form-grid">
                     <div class="form-section full"><span>Visit details</span><small>Choose the attendee and date</small></div>
-                    <div class="full"><label for="attendee_id">Attendee *</label><select id="attendee_id" name="attendee_id" required <?= $editing_record ? "disabled" : "" ?>><option value="">Select attendee</option><?php while ($attendee = $attendees->fetch_assoc()): ?><option value="<?= $attendee["id"] ?>" <?= (int) $attendee["id"] === (int) ($editing_record["attendee_id"] ?? 0) ? "selected" : "" ?>><?= htmlspecialchars($attendee["registration_number"] . " - " . trim($attendee["first_name"] . " " . $attendee["middle_name"] . " " . $attendee["last_name"])) ?></option><?php endwhile; ?></select></div>
+                    <div class="full"><label for="attendee_id">Attendee *</label><select id="attendee_id" name="attendee_id" required <?= $editing_record ? "disabled" : "" ?>><option value="">Select attendee</option><?php foreach ($attendees as $attendee): ?><option value="<?= (int) $attendee["id"] ?>" <?= (int) $attendee["id"] === (int) ($editing_record["attendee_id"] ?? 0) ? "selected" : "" ?>><?= htmlspecialchars($attendee["registration_number"] . " - " . trim($attendee["first_name"] . " " . $attendee["middle_name"] . " " . $attendee["last_name"])) ?></option><?php endforeach; ?></select></div>
                     <div><label for="service_date">Service date *</label><input id="service_date" type="date" name="service_date" value="<?= $editing_record ? $edit_value("service_date") : date("Y-m-d") ?>" required></div>
                     <div class="form-section full"><span>Doctor&apos;s notes</span><small>Record the presenting complaint or initial clinical notes</small></div>
                     <div class="full"><label for="notes">Doctor&apos;s notes</label><textarea id="notes" name="notes" rows="4" placeholder="Enter the presenting complaint or doctor&apos;s notes"><?= $edit_value("notes") ?></textarea></div>
@@ -270,57 +271,41 @@ function toggleReferralNotes() {
 referralRequired.addEventListener('change', toggleReferralNotes);
 toggleReferralNotes();
 
-const preparedReports = new WeakMap();
-
 document.querySelectorAll('.record-action-whatsapp').forEach((shareLink) => {
     shareLink.addEventListener('click', async (event) => {
-        event.preventDefault();
-        if (shareLink.getAttribute('aria-busy') === 'true') return;
+        if (shareLink.getAttribute('aria-busy') === 'true') {
+            event.preventDefault();
+            return;
+        }
 
         const label = shareLink.querySelector('span');
         const originalLabel = label.textContent;
         shareLink.setAttribute('aria-busy', 'true');
+        label.textContent = 'Preparing PDF...';
 
         try {
-            let reportFile = preparedReports.get(shareLink);
-            if (!reportFile) {
-                label.textContent = 'Preparing...';
-                const response = await fetch(shareLink.dataset.reportUrl, { credentials: 'same-origin' });
-                if (!response.ok || !response.headers.get('Content-Type')?.includes('application/pdf')) {
-                    throw new Error('The medical report PDF could not be created.');
-                }
-                reportFile = new File([await response.blob()], shareLink.dataset.fileName, { type: 'application/pdf' });
-                preparedReports.set(shareLink, reportFile);
-                label.textContent = 'Send PDF';
-                window.alert('PDF ready. Select Send PDF again to share it directly from your device.');
-                return;
+            const response = await fetch(shareLink.dataset.reportUrl, { credentials: 'same-origin' });
+            if (!response.ok || !response.headers.get('Content-Type')?.includes('application/pdf')) {
+                throw new Error('The medical report PDF could not be created.');
             }
 
-            if (navigator.canShare?.({ files: [reportFile] }) && navigator.share) {
-                await navigator.share({
-                    files: [reportFile],
-                    title: 'MUSDAA Medical Camp report',
-                    text: <?= json_encode(MUSDAA_RETURN_INVITATION, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?>
-                });
-            } else {
-                window.open(shareLink.href, '_blank', 'noopener');
-                const pdfUrl = URL.createObjectURL(reportFile);
-                const downloadLink = document.createElement('a');
-                downloadLink.href = pdfUrl;
-                downloadLink.download = reportFile.name;
-                document.body.appendChild(downloadLink);
-                downloadLink.click();
-                downloadLink.remove();
-                window.setTimeout(() => URL.revokeObjectURL(pdfUrl), 60000);
-                window.alert('The PDF has been downloaded. Attach it in the WhatsApp chat before sending.');
-            }
+            const pdfBlob = await response.blob();
+            const pdfUrl = URL.createObjectURL(pdfBlob);
+            const downloadLink = document.createElement('a');
+            downloadLink.href = pdfUrl;
+            downloadLink.download = shareLink.dataset.fileName;
+            document.body.appendChild(downloadLink);
+            downloadLink.click();
+            downloadLink.remove();
+            window.setTimeout(() => URL.revokeObjectURL(pdfUrl), 60000);
+            window.alert('The WhatsApp chat for this attendee is open with the message filled in. Attach the downloaded PDF before sending.');
         } catch (error) {
             if (error.name !== 'AbortError') {
                 window.alert(error.message || 'Could not prepare the medical report PDF.');
             }
         } finally {
             shareLink.removeAttribute('aria-busy');
-            if (!preparedReports.has(shareLink)) label.textContent = originalLabel;
+            label.textContent = originalLabel;
         }
     });
 });

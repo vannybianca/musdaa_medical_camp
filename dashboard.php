@@ -76,6 +76,7 @@ $recent_items = $recent ? $recent->fetch_all(MYSQLI_ASSOC) : [];
         <a href="register.php">Register attendee</a>
         <a href="checkin.php">Daily check-in</a>
         <a href="service_records.php">Medical services</a>
+        <a href="all_records.php">All Records</a>
         <a href="reports.php">Reports</a>
         <a class="logout-link" href="logout.php"><span class="user-avatar" aria-hidden="true">M</span>Sign out</a>
     </nav>

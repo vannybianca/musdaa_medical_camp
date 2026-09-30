@@ -81,6 +81,7 @@ while ($row = $day_result->fetch_assoc()) {
         <a href="register.php">Register attendee</a>
         <a href="checkin.php">Daily check-in</a>
         <a href="service_records.php">Medical services</a>
+        <a href="all_records.php">All Records</a>
         <a class="active" href="reports.php" aria-current="page">Reports</a>
         <a class="logout-link" href="logout.php">Sign out</a>
     </nav>
