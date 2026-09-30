@@ -52,13 +52,16 @@ $attendance = $conn->query(
 );
 
 $day_counts = array_fill(1, 7, 0);
+$day_dates = [];
 $day_result = $conn->query(
-    "SELECT s.day_number, COUNT(d.id) AS total
+    "SELECT s.day_number, s.event_date, COUNT(DISTINCT d.attendee_id) AS total
      FROM summit_days s LEFT JOIN daily_checkins d ON d.summit_day_id = s.id
-     GROUP BY s.day_number ORDER BY s.day_number"
+     GROUP BY s.day_number, s.event_date ORDER BY s.day_number"
 );
 while ($row = $day_result->fetch_assoc()) {
-    $day_counts[(int) $row["day_number"]] = (int) $row["total"];
+    $day_number = (int) $row["day_number"];
+    $day_counts[$day_number] = (int) $row["total"];
+    $day_dates[$day_number] = date("M j, Y", strtotime($row["event_date"]));
 }
 ?>
 <!DOCTYPE html>
@@ -92,6 +95,20 @@ while ($row = $day_result->fetch_assoc()) {
         <div class="stat-card"><span class="report-stat-label"><i class="report-icon" aria-hidden="true">&#8593;</i>Registration trend</span><strong class="trend-<?= $trend_label ?>"><?= $trend_change > 0 ? "+" : "" ?><?= $trend_change ?> <small class="trend-arrow" aria-hidden="true">&#8593;</small></strong><small>Since first registration day</small></div>
         <div class="stat-card"><span class="report-stat-label"><i class="report-icon" aria-hidden="true">&#10003;</i>Day 1 check-ins</span><strong><?= $day_counts[1] ?></strong><small>Attendance recorded</small></div>
         <div class="stat-card"><span class="report-stat-label"><i class="report-icon" aria-hidden="true">&#10003;</i>Day 7 check-ins</span><strong><?= $day_counts[7] ?></strong><small>Attendance recorded</small></div>
+    </section>
+
+    <section class="dashboard-panel attendance-panel">
+        <div class="panel-heading"><div><p class="eyebrow">Daily totals</p><h2>Members checked in</h2></div><span class="panel-count">By camp date</span></div>
+        <div class="table-wrap">
+            <table>
+                <thead><tr><th>Camp day</th><th>Date</th><th>Members checked in</th></tr></thead>
+                <tbody>
+                <?php for ($day = 1; $day <= 7; $day++): ?>
+                    <tr><td>Day <?= $day ?></td><td><?= htmlspecialchars($day_dates[$day] ?? "Date not set") ?></td><td><strong><?= $day_counts[$day] ?></strong></td></tr>
+                <?php endfor; ?>
+                </tbody>
+            </table>
+        </div>
     </section>
 
     <section class="dashboard-panel chart-panel">

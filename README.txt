@@ -22,8 +22,13 @@ SETUP
 5. Import database.sql.
 
    If the database was already imported, run database_upgrade.sql instead
-   to add attendee contact fields, structured medical measurements,
-   referrals, audit logs, and the Report Officer role.
+   to add attendee contact fields, clinical history and diagnosis, structured
+   medical measurements, referrals, audit logs, and the Report Officer role.
+
+   If database_upgrade.sql was already run, run
+   medical_record_fields_upgrade.sql once to add the new history, diagnosis,
+   medical_record_fields_upgrade.sql once to add tribe, SCD family history,
+   clinical history, diagnosis, weight, height, and blood-sugar unit fields.
 
 6. Open:
    http://localhost/musdaa_medical_camp/

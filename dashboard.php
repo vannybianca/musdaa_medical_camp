@@ -12,9 +12,13 @@ $stats = [];
 
 $queries = [
     "attendees" => "SELECT COUNT(*) AS total FROM attendees",
-    "checkins" => "SELECT COUNT(*) AS total FROM daily_checkins WHERE DATE(checkin_time) = CURDATE()",
+    "non_musdaa" => "SELECT COUNT(*) AS total FROM attendees WHERE musdaa_status = 'Nonmusdaa'",
+    "checkins" => "SELECT COUNT(DISTINCT d.attendee_id) AS total
+                   FROM daily_checkins d
+                   JOIN summit_days s ON s.id = d.summit_day_id
+                   WHERE s.event_date = CURDATE()",
     "services" => "SELECT COUNT(*) AS total FROM service_records WHERE service_date = CURDATE()",
-    "days" => "SELECT COUNT(*) AS total FROM summit_days WHERE event_date >= CURDATE()"
+    "days" => "SELECT COALESCE(MAX(day_number), 0) AS total FROM summit_days WHERE event_date = CURDATE()"
 ];
 
 foreach ($queries as $key => $query) {
@@ -50,6 +54,7 @@ $recent = $conn->query(
      FROM daily_checkins d
      JOIN attendees a ON a.id = d.attendee_id
      JOIN summit_days s ON s.id = d.summit_day_id
+        WHERE s.event_date = CURDATE()
      ORDER BY d.checkin_time DESC LIMIT 8"
 );
 $recent_items = $recent ? $recent->fetch_all(MYSQLI_ASSOC) : [];
@@ -87,8 +92,9 @@ $recent_items = $recent ? $recent->fetch_all(MYSQLI_ASSOC) : [];
 
     <section class="stat-grid" aria-label="Camp statistics">
         <div class="stat-card"><span>Registered attendees</span><strong><?= $stats["attendees"] ?></strong><small>All registrations</small></div>
-        <div class="stat-card"><span>Check-ins today</span><strong><?= $stats["checkins"] ?></strong><small>Recorded today</small></div>
-        <div class="stat-card"><span>Services today</span><strong><?= $stats["services"] ?></strong><small>Clinical visits today</small></div>
+        <div class="stat-card"><span>Non-MUSDAA members</span><strong><?= $stats["non_musdaa"] ?></strong><small>Registered at the camp</small></div>
+        <div class="stat-card"><span>Check-ins today</span><strong><?= $stats["checkins"] ?></strong><small><?= $stats["days"] > 0 ? "Day " . $stats["days"] . " camp attendance" : "No camp day scheduled today" ?></small></div>
+        <div class="stat-card"><span>Services today</span><strong><?= $stats["services"] ?></strong><small>Clinical visits entered today</small></div>
     </section>
 
     <section class="dashboard-grid">
@@ -129,7 +135,7 @@ $recent_items = $recent ? $recent->fetch_all(MYSQLI_ASSOC) : [];
                 </div>
             <?php endforeach; ?>
             <?php if (!$recent_items): ?>
-                <div class="empty-state"><span class="empty-state-icon" aria-hidden="true">+</span><strong>No check-ins yet</strong><small>Recent attendance activity will appear here.</small></div>
+                <div class="empty-state"><span class="empty-state-icon" aria-hidden="true">+</span><strong>No check-ins for today's camp day</strong><small>Today's attendance will appear here.</small></div>
             <?php elseif (count($recent_items) < 3): ?>
                 <div class="activity-summary">Showing the latest <?= count($recent_items) ?> check-in<?= count($recent_items) === 1 ? "" : "s" ?>.</div>
             <?php endif; ?>

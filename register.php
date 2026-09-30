@@ -8,6 +8,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $age = (int) ($_POST["age"] ?? 0);
     $gender = $_POST["gender"] ?? "";
     $address = trim($_POST["address"] ?? "");
+    $tribe = trim($_POST["tribe"] ?? "");
     $phone = trim($_POST["phone"] ?? "");
     $days_attend = isset($_POST["days_attend"]) ? implode(", ", $_POST["days_attend"]) : "";
     $musdaa_status = $_POST["musdaa_status"] ?? "";
@@ -21,13 +22,13 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     $sql = "INSERT INTO attendees
         (registration_number, first_name, middle_name, last_name, age, gender,
-         phone, address, days_attend, musdaa_status, consent_given)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+         phone, address, tribe, days_attend, musdaa_status, consent_given)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
     $stmt = $conn->prepare($sql);
 
     $stmt->bind_param(
-        "ssssisssssi",
+        "ssssissssssi",
         $registration_number,
         $first_name,
         $middle_name,
@@ -36,12 +37,25 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $gender,
         $phone,
         $address,
+        $tribe,
         $days_attend,
         $musdaa_status,
         $consent_given
     );
 
     if ($stmt->execute()) {
+        $attendee_id = $stmt->insert_id;
+        $camp_day_stmt = $conn->prepare("SELECT id FROM summit_days WHERE event_date = CURDATE() LIMIT 1");
+        $camp_day_stmt->execute();
+        $camp_day = $camp_day_stmt->get_result()->fetch_assoc();
+        if ($camp_day) {
+            $staff = "Registration Desk";
+            $checkin_stmt = $conn->prepare(
+                "INSERT IGNORE INTO daily_checkins (attendee_id, summit_day_id, checked_in_by) VALUES (?, ?, ?)"
+            );
+            $checkin_stmt->bind_param("iis", $attendee_id, $camp_day["id"], $staff);
+            $checkin_stmt->execute();
+        }
         $message = "<div class='success'>
             Registration successful!<br>
             Registration Number: <strong>" . htmlspecialchars($registration_number) . "</strong>
@@ -85,6 +99,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
 <div class="full"><label for="address">Address *</label><input id="address" type="text" name="address" required></div>
 <div><label for="phone">Contact *</label><input id="phone" type="text" name="phone" required></div>
+<div><label for="tribe">Tribe</label><input id="tribe" type="text" name="tribe" autocomplete="off"></div>
 
 <div class="full"><label>Days attend *</label><div class="choice-grid">
 <?php for ($day = 1; $day <= 7; $day++): ?>

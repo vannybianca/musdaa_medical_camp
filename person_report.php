@@ -1,6 +1,11 @@
+            $add_text("Your health matters. Come back after camp to hear God's message and renew your spirit. We look forward to welcoming you!", 10, "F2", [0.03, 0.38, 0.36]);
+            weight, height, clinical_history, diagnosis, urine_output, blood_sugar, blood_sugar_unit, consciousness, notes, result,
+    $add_text("Random blood sugar (RBS): " . pdf_value($record["blood_sugar"]) . " " . pdf_value($record["blood_sugar_unit"]));
 <?php
 session_start();
 require_once "database.php";
+require_once "report_invitation.php";
+$add_text(MUSDAA_RETURN_INVITATION, 10, "F2", [0.03, 0.38, 0.36]);
 
 if (!isset($_SESSION["user_id"])) {
     header("Location: login.php");
@@ -15,7 +20,7 @@ if ($attendee_id < 1) {
 
 $attendee_stmt = $conn->prepare(
     "SELECT registration_number, first_name, middle_name, last_name, gender, age,
-            phone, address, musdaa_status
+            phone, address, tribe, musdaa_status
      FROM attendees WHERE id = ? LIMIT 1"
 );
 $attendee_stmt->bind_param("i", $attendee_id);
@@ -29,7 +34,8 @@ if (!$attendee) {
 
 $record_stmt = $conn->prepare(
     "SELECT m.service_name, service_date, tests, temperature, pulse, systolic, diastolic, spo2,
-            urine_output, blood_sugar, consciousness, notes, result,
+            weight, height, clinical_history, diagnosis, scd_family_history, urine_output,
+            blood_sugar, blood_sugar_unit, consciousness, notes, result,
             doctor_recommendation, referral_required, referral_notes
      FROM service_records
      JOIN medical_services m ON m.id = service_records.service_id
@@ -104,6 +110,7 @@ $add_section = function (string $title) use (&$pages, &$y, $add_text): void {
 };
 
 $add_text("MEDICAL RESULTS REPORT", 18, "F2", [0.09, 0.2, 0.23]);
+$add_text("Please join us again after the medical camp to listen to God's message.", 10, "F2", [0.03, 0.38, 0.36]);
 $add_text("To: Medical Records File", 10);
 $add_text("Date: " . date("F j, Y"), 10);
 $add_text("Subject: Medical results for " . pdf_value($full_name), 10, "F2");
@@ -116,6 +123,7 @@ $add_text("Age: " . pdf_value($attendee["age"]));
 $add_text("Gender: " . pdf_value($attendee["gender"]));
 $add_text("Contact: " . pdf_value($attendee["phone"]));
 $add_text("Address: " . pdf_value($attendee["address"]));
+$add_text("Tribe: " . pdf_value($attendee["tribe"]));
 $add_text("Membership: " . pdf_value($attendee["musdaa_status"]));
 $add_text("Camp days attended: " . ($checkins ? implode(", ", array_map(fn($row) => "Day " . $row["day_number"], $checkins)) : "None recorded"));
 $y -= 8;
@@ -127,15 +135,24 @@ if (!$records) {
     foreach ($records as $index => $record) {
         $add_section("MEDICAL VISIT " . ($index + 1) . " - " . date("F j, Y", strtotime($record["service_date"])));
         $add_text("Service: " . pdf_value($record["service_name"]), 10, "F2");
+        $add_text("Clinical presentation and history: " . pdf_value($record["clinical_history"]));
         $add_text("Doctor's notes: " . pdf_value($record["notes"]));
+        $add_text("Diagnosis: " . pdf_value($record["diagnosis"]));
+            $add_text("SCD family history: " . pdf_value($record["scd_family_history"]));
         $add_text("Tests performed: " . pdf_value($record["tests"]));
         $add_text("Test results: " . pdf_value($record["result"]));
         $add_text("Temperature: " . pdf_value($record["temperature"]) . " C");
         $add_text("Pulse: " . pdf_value($record["pulse"]) . " bpm");
         $add_text("Blood pressure: " . pdf_value($record["systolic"]) . " / " . pdf_value($record["diastolic"]) . " mmHg");
         $add_text("SpO2: " . pdf_value($record["spo2"]) . "%");
+        $add_text("Weight: " . pdf_value($record["weight"]) . " kg");
+        $add_text("Height: " . pdf_value($record["height"]) . " cm");
+        $bmi = (float) $record["weight"] > 0 && (float) $record["height"] > 0
+            ? number_format((float) $record["weight"] / (((float) $record["height"] / 100) ** 2), 1)
+            : null;
+        $add_text("BMI: " . pdf_value($bmi) . " kg/m2");
         $add_text("Urine output: " . pdf_value($record["urine_output"]));
-        $add_text("Blood glucose: " . pdf_value($record["blood_sugar"]));
+        $add_text("Random blood sugar (RBS): " . pdf_value($record["blood_sugar"]) . " mmol/L");
         $add_text("Level of consciousness: " . pdf_value($record["consciousness"]));
         $add_text("Doctor's recommendations or prescription: " . pdf_value($record["doctor_recommendation"]));
         if ((int) $record["referral_required"]) {
